@@ -19,7 +19,7 @@ function App() {
         <Route path='/all-books' element={<AllBooks />} />
         <Route path='/random' element={<Randome />} />
         <Route path='/sell' element={<Sell />} />
-        <Route path='/signup' element={<Cart />} />
+        <Route path='/cart' element={<Cart />} />
         <Route path='/signin' element={<Login />} />
         <Route path='/signup' element={<Register />} />
       </Routes>

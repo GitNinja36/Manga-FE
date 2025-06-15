@@ -2,6 +2,8 @@ import axios from 'axios';
 
 const BASE_URL = 'http://localhost:8080/v1';
 
+const token = localStorage.getItem('token');
+
 //  Get all reviews (used in Testimonials)
 export const getAllReviews = async () => {
   try {
@@ -59,10 +61,48 @@ export const getAllBooksPaginated = async ({ page = 1, limit = 12, search = '', 
     console.log(res.data);
     return {
       data: res.data?.data || [],
-      total: res.data?.total || 0,
+      total: res.data?.totalItems || 0,
+      totalPages: res.data?.totalPages || 1,
     };
   } catch (error) {
     console.error('Error fetching books with pagination:', error);
     return { data: [], total: 0 };
+  }
+};
+
+//get randome manga
+export const getRandomBook = async () => {
+  const res = await axios.get(`${BASE_URL}/random`);
+  return res.data;
+};
+
+//upload on cloudinary
+export const uploadToCloudinary = async (file) => {
+  try {
+    const data = new FormData();
+    data.append('file', file);
+    data.append('upload_preset', 'mangaZone');
+
+    const res = await axios.post('https://api.cloudinary.com/v1_1/davtv5r1c/upload', data);
+    return res.data.secure_url;
+  } catch (err) {
+    console.error('Cloudinary upload failed:', err);
+    throw err;
+  }
+};
+
+// Upload manga to backend
+export const uploadBook = async (bookData) => {
+  try {
+    const res = await axios.post('http://localhost:8080/v1/book/add', bookData, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+        id: localStorage.getItem('userId'),
+      },
+    });
+    return res.data;
+  } catch (err) {
+    console.error('Book upload failed:', err);
+    throw err;
   }
 };

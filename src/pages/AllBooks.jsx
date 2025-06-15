@@ -3,7 +3,8 @@ import { motion } from 'framer-motion';
 import { getAllBooksPaginated } from '../apis/api.js';
 
 const genresList = [
-  'Action', 'Kids', 'Comedy', 'Fantasy', 'Game', 'Martial Arts', 'Adventure', 'Mystery',
+  'Action', 'Kids', 'Comedy', 'Fantasy', 'Game',
+  'Martial Arts', 'Adventure', 'Mystery',
 ];
 
 const AllBooks = () => {
@@ -14,20 +15,17 @@ const AllBooks = () => {
   const [genre, setGenre] = useState('');
   const [activeFilter, setActiveFilter] = useState('latest');
 
+  // ✅ Fetch books using shared API utility
   const fetchBooks = async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/book/all?page=1&limit=12`);
-      console.log(res.data); // ✅ for debugging
-      setBooks(res.data.data); // ✅ only array goes into `books`
-      setPageInfo({
-        currentPage: res.data.currentPage,
-        totalPages: res.data.totalPages,
-        totalItems: res.data.totalItems,
-      });
+      const res = await getAllBooksPaginated({ page, limit: 12, search: searchTerm, genre });
+      console.log("Fetched Books:", res);
+      setBooks(res.data);
+      setTotalPages(res.totalPages || 1);
     } catch (error) {
       console.error("Failed to fetch books", error);
     }
-  }
+  };
 
   useEffect(() => {
     fetchBooks();
@@ -86,20 +84,24 @@ const AllBooks = () => {
       <div className="flex">
         {/* Books Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 flex-1">
-          {books.map((book, idx) => (
-            <motion.div
-              key={book._id}
-              className="bg-gray-800 p-4 rounded-xl shadow-md hover:shadow-lg transition duration-300 cursor-pointer"
-              whileHover={{ scale: 1.02 }}
-            >
-              <img
-                src={book.coverImage}
-                alt={book.title}
-                className="w-full h-48 object-cover rounded-md mb-3"
-              />
-              <h3 className="text-lg font-semibold text-white truncate">{book.title}</h3>
-            </motion.div>
-          ))}
+          {Array.isArray(books) && books.length > 0 ? (
+            books.map((book) => (
+              <motion.div
+                key={book._id}
+                className="bg-gray-800 p-4 rounded-xl shadow-md hover:shadow-lg transition duration-300 cursor-pointer"
+                whileHover={{ scale: 1.02 }}
+              >
+                <img
+                  src={book.coverImage}
+                  alt={book.title}
+                  className="w-full h-48 object-cover rounded-md mb-3"
+                />
+                <h3 className="text-lg font-semibold text-white truncate">{book.title}</h3>
+              </motion.div>
+            ))
+          ) : (
+            <p className="text-white col-span-full">No books found.</p>
+          )}
         </div>
 
         {/* Genres */}
