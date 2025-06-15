@@ -18,7 +18,7 @@ const Hero = () => {
           Discover, collect, and relive your favorite stories. From shōnen legends to slice-of-life gems — your manga journey starts here!
         </p>
         <div className="flex justify-center gap-6">
-          <Link to="/shop">
+          <Link to="/all-books">
             <button className="bg-pink-600 hover:bg-pink-700 text-white px-6 py-3 rounded-xl transition duration-300 shadow-lg">
               Browse Manga
             </button>

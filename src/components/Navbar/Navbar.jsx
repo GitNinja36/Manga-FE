@@ -1,20 +1,38 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { FaUserCircle, FaShoppingCart } from 'react-icons/fa';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { FaShoppingCart } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
+import { fetchUserInfo } from '../../apis/api.js';
 
 const Navbar = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [user, setUser] = useState(null);
 
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
 
   const links = [
     { title: "Home", link: "/" },
     { title: "All Book", link: "/all-books" },
-    { title: "Randome", link: "/random" },
+    { title: "Random", link: "/random" },
     { title: "Sell", link: "/sell" },
   ];
+
+  useEffect(() => {
+    const getUser = async () => {
+      const userInfo = await fetchUserInfo();
+      setUser(userInfo);
+    };
+    getUser();
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
+    setUser(null);
+    setDropdownOpen(false);
+    navigate('/');
+  };
 
   return (
     <motion.nav
@@ -24,7 +42,7 @@ const Navbar = () => {
       className="bg-black text-white px-4 md:px-10 py-3 shadow-md border border-gray-700 rounded-3xl m-4"
     >
       <div className="max-w-screen-xl mx-auto flex items-center justify-between">
-        {/* Left - Logo + Brand */}
+        {/* Logo */}
         <Link to="/" className="flex items-center gap-3">
           <img
             src="https://cdn-icons-png.flaticon.com/128/10433/10433049.png"
@@ -36,7 +54,7 @@ const Navbar = () => {
           </h1>
         </Link>
 
-        {/* Center - Nav Links */}
+        {/* Nav Links */}
         <div className="hidden md:flex gap-8 text-lg font-medium tracking-wide">
           {links.map(({ title, link }, i) => (
             <Link
@@ -49,16 +67,26 @@ const Navbar = () => {
           ))}
         </div>
 
-        {/* Right - Icons & Dropdown */}
+        {/* Right - Cart & Avatar */}
         <div className="flex items-center gap-6 relative">
           <Link to="/cart">
             <FaShoppingCart className="text-2xl hover:text-pink-400 transition-colors duration-200" />
           </Link>
 
-          <button onClick={toggleDropdown}>
-            <FaUserCircle className="text-3xl hover:text-pink-400 transition-colors duration-200" />
+          {/* Avatar */}
+          <button onClick={toggleDropdown} className="relative">
+            <img
+              src={
+                user?.avatar
+                  ? user.avatar
+                  : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'
+              }
+              alt="avatar"
+              className="w-10 h-10 rounded-full object-cover border-2 border-gray-600 hover:border-pink-400 transition-all duration-200"
+            />
           </button>
 
+          {/* Dropdown */}
           <AnimatePresence>
             {dropdownOpen && (
               <motion.div
@@ -67,35 +95,38 @@ const Navbar = () => {
                 exit={{ opacity: 0, y: -10 }}
                 className="absolute top-12 right-0 w-44 bg-zinc-900 border border-gray-600 text-white rounded-md shadow-lg z-50 overflow-hidden"
               >
-                {!isLoggedIn ? (
+                {user ? (
+                  <>
+                    <Link
+                      to="/profile"
+                      onClick={() => setDropdownOpen(false)}
+                      className="block px-4 py-2 hover:bg-zinc-800"
+                    >
+                      Profile
+                    </Link>
+                    <button
+                      onClick={handleLogout}
+                      className="block w-full text-left px-4 py-2 hover:bg-zinc-800"
+                    >
+                      Logout
+                    </button>
+                  </>
+                ) : (
                   <>
                     <Link
                       to="/signin"
+                      onClick={() => setDropdownOpen(false)}
                       className="block px-4 py-2 hover:bg-zinc-800"
                     >
                       Sign In
                     </Link>
                     <Link
                       to="/signup"
+                      onClick={() => setDropdownOpen(false)}
                       className="block px-4 py-2 hover:bg-zinc-800"
                     >
                       Register
                     </Link>
-                  </>
-                ) : (
-                  <>
-                    <Link
-                      to="/profile"
-                      className="block px-4 py-2 hover:bg-zinc-800"
-                    >
-                      Profile
-                    </Link>
-                    <button
-                      onClick={() => setIsLoggedIn(false)}
-                      className="block w-full text-left px-4 py-2 hover:bg-zinc-800"
-                    >
-                      Logout
-                    </button>
                   </>
                 )}
               </motion.div>

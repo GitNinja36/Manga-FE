@@ -3,6 +3,31 @@ import axios from 'axios';
 const BASE_URL = 'http://localhost:8080/v1';
 
 const token = localStorage.getItem('token');
+export const getToken = () => localStorage.getItem('token');
+export const getUserId = () => localStorage.getItem('userId');
+
+// 🧠 Get Logged-in User Info
+export const fetchUserInfo = async () => {
+  const token = getToken();
+  const id = getUserId();
+
+  try {
+    if (token && id) {
+      const res = await axios.get(`${BASE_URL}/user/info`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          id,
+        },
+      });
+      return res.data;
+    } else {
+      return null;
+    }
+  } catch (err) {
+    console.error('Error fetching user info:', err);
+    return null;
+  }
+};
 
 //  Get all reviews (used in Testimonials)
 export const getAllReviews = async () => {

@@ -17,9 +17,9 @@ const Footer = () => {
           <h2 className="text-xl font-semibold mb-4">Explore</h2>
           <ul className="space-y-2 text-sm">
             <li><a href="/" className="hover:text-white transition">Home</a></li>
-            <li><a href="/manga" className="hover:text-white transition">Browse Manga</a></li>
+            <li><a href="/all-books" className="hover:text-white transition">Browse Manga</a></li>
             <li><a href="/sell" className="hover:text-white transition">Sell Manga</a></li>
-            <li><a href="/about" className="hover:text-white transition">About Us</a></li>
+            <li><a href="/" className="hover:text-white transition">About Us</a></li>
           </ul>
         </div>
 
