@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { getAllBooksPaginated } from '../apis/api.js';
+import { useNavigate } from 'react-router-dom';
 
 const genresList = [
   'Action', 'Kids', 'Comedy', 'Fantasy', 'Game',
@@ -8,6 +9,7 @@ const genresList = [
 ];
 
 const AllBooks = () => {
+  const navigate = useNavigate(); 
   const [books, setBooks] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -15,7 +17,6 @@ const AllBooks = () => {
   const [genre, setGenre] = useState('');
   const [activeFilter, setActiveFilter] = useState('latest');
 
-  // ✅ Fetch books using shared API utility
   const fetchBooks = async () => {
     try {
       const res = await getAllBooksPaginated({ page, limit: 12, search: searchTerm, genre });
@@ -88,6 +89,7 @@ const AllBooks = () => {
             books.map((book) => (
               <motion.div
                 key={book._id}
+                onClick={() => navigate(`/manga/${book._id}`)}
                 className="bg-gray-800 p-4 rounded-xl shadow-md hover:shadow-lg transition duration-300 cursor-pointer"
                 whileHover={{ scale: 1.02 }}
               >

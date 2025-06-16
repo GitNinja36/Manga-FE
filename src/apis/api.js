@@ -131,3 +131,46 @@ export const uploadBook = async (bookData) => {
     throw err;
   }
 };
+
+//get a manga 
+export const getSingleBookById = async (id) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/book/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching single book:', error);
+    throw error;
+  }
+};
+
+//get review of any book
+export const getReviewsByBookId = async (id, headers) => {
+  try {
+    const response = await axios.get(`http://localhost:8080/v1/review/${id}`, { headers });
+    return response.data;
+  }catch(err){
+    console.error('Error fetching single book:', err);
+    throw err;
+  }
+};
+
+// Submit a review for a book
+export const submitReview = async ({ mangaId, rating, comment }) => {
+  const token = getToken();
+  const userId = getUserId();
+
+  try {
+    const headers = {
+      Authorization: `Bearer ${token}`,
+      id: userId,
+    };
+
+    const body = { mangaId, rating, comment };
+
+    const res = await axios.post(`${BASE_URL}/review/add`, body, { headers });
+    return res.data;
+  } catch (err) {
+    console.error('Error submitting review:', err);
+    throw err;
+  }
+};
