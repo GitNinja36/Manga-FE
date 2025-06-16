@@ -194,14 +194,19 @@ export const fetchRandomBook = async () => {
 
 //add to cart
 export const addToCart = async (mangaId, quantity = 1) => {
-  const headers = {
-    Authorization: `Bearer ${getToken()}`,
-    id: getUserId()
-  };
+  try {
+    const headers = {
+      Authorization: `Bearer ${getToken()}`,
+      id: getUserId()
+    };
 
-  const body = { mangaId, quantity };
-  const res = await axios.post(`${BASE_URL}/cart/add`, body, { headers });
-  return res.data;
+    const body = { mangaId, quantity };
+    const res = await axios.post(`${BASE_URL}/cart/add`, body, { headers });
+    return res.data;
+  } catch (err) {
+    console.error('Error adding to cart:', err);
+    throw err;
+  }
 };
 
 // Get cart items
@@ -247,5 +252,16 @@ export const clearCart = async (cartItems) => {
       headers,
       data: { mangaId: item.manga._id, quantity: item.quantity },
     });
+  }
+};
+
+// STRIPE: Create Payment Intent
+export const createPaymentIntent = async (amount) => {
+  try {
+    const res = await axios.post(`${BASE_URL}/payment/create-payment-intent`, { amount });
+    return res.data.clientSecret;
+  } catch (error) {
+    console.error('Error creating payment intent:', error);
+    throw error;
   }
 };
