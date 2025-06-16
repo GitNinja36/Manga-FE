@@ -5,7 +5,8 @@ import { toast, ToastContainer } from 'react-toastify';
 import {
   fetchRandomBook,
   submitReview,
-  getReviewsByBookId
+  getReviewsByBookId,
+  addToCart,
 } from '../apis/api.js'; 
 
 const Random = () => {
@@ -109,6 +110,15 @@ const Random = () => {
     return `${minDate.toLocaleDateString('en-US', options)} - ${maxDate.toLocaleDateString('en-US', options)}`;
   };
 
+  const handleAddToCart = async () => {
+    try {
+      await addToCart(book._id, quantity);
+      toast.success('Added to cart!');
+    } catch (error) {
+      console.error('Add to cart failed', error);
+      toast.error('Failed to add to cart.');
+    }
+  };
   const estimatedDelivery = getEstimatedDeliveryRange();
 
   if (!book) return <div className="text-center text-white mt-20">Loading...</div>;
@@ -192,8 +202,17 @@ const Random = () => {
 
           {/* Buttons */}
           <div className="flex gap-4">
-            <button className="px-6 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-all">Add to Cart</button>
-            <button className="px-6 py-2 bg-white text-black rounded-lg hover:bg-gray-300 transition-all">Buy Now</button>
+            <button 
+              onClick={handleAddToCart}
+              className="px-6 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-all"
+            >
+              Add to Cart
+            </button>
+            <button 
+              className="px-6 py-2 bg-white text-black rounded-lg hover:bg-gray-300 transition-all"
+            >
+              Buy Now
+            </button>
           </div>
 
           {/* Delivery Info */}

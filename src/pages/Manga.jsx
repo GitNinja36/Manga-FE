@@ -3,7 +3,14 @@ import { useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FaStar } from 'react-icons/fa';
 import { toast, ToastContainer } from 'react-toastify';
-import { getSingleBookById, getReviewsByBookId, getToken, getUserId, submitReview } from '../apis/api.js';
+import { 
+  getSingleBookById, 
+  getReviewsByBookId, 
+  getToken, 
+  getUserId, 
+  submitReview,
+  addToCart, 
+} from '../apis/api.js';
 
 const MangaPage = () => {
   const { id } = useParams();
@@ -108,6 +115,16 @@ const handleReviewSubmit = async () => {
   
   const estimatedDelivery = getEstimatedDeliveryRange();
 
+  const handleAddToCart = async () => {
+    try {
+      await addToCart(book._id, quantity);
+      toast.success('Added to cart!');
+    } catch (error) {
+      console.error('Add to cart failed', error);
+      toast.error('Failed to add to cart.');
+    }
+  };
+
   if (!book) return <div className="text-center text-white mt-20">Loading...</div>;
 
   return (
@@ -187,8 +204,17 @@ const handleReviewSubmit = async () => {
 
           {/* buy and add to cart button*/}
           <div className="flex gap-4">
-            <button className="px-6 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-all">Add to Cart</button>
-            <button className="px-6 py-2 bg-white text-black rounded-lg hover:bg-gray-300 transition-all">Buy Now</button>
+            <button 
+              className="px-6 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-all"
+              onClick={handleAddToCart}
+            >
+              Add to Cart
+            </button>
+            <button 
+              className="px-6 py-2 bg-white text-black rounded-lg hover:bg-gray-300 transition-all"
+            >
+              Buy Now
+            </button>
           </div>
 
           {/* Highlights */}

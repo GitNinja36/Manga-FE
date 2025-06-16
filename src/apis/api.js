@@ -191,3 +191,61 @@ export const fetchRandomBook = async () => {
     throw error;
   }
 };
+
+//add to cart
+export const addToCart = async (mangaId, quantity = 1) => {
+  const headers = {
+    Authorization: `Bearer ${getToken()}`,
+    id: getUserId()
+  };
+
+  const body = { mangaId, quantity };
+  const res = await axios.post(`${BASE_URL}/cart/add`, body, { headers });
+  return res.data;
+};
+
+// Get cart items
+export const fetchCartItems = async () => {
+  const headers = {
+    Authorization: `Bearer ${getToken()}`,
+    id: getUserId(),
+  };
+
+  const res = await axios.get(`${BASE_URL}/cart/all`, { headers });
+  console.log(res);
+  console.log(res.data);
+  const items = res.data?.data || [];
+  return items;
+};
+
+// Update quantity (increase or decrease)
+export const updateCartQuantity = async (mangaId, type) => {
+  const headers = {
+    Authorization: `Bearer ${getToken()}`,
+    id: getUserId(),
+  };
+
+  if (type === 'inc') {
+    await axios.post(`${BASE_URL}/cart/add`, { mangaId, quantity: 1 }, { headers });
+  } else {
+    await axios.delete(`${BASE_URL}/cart/remove`, {
+      headers,
+      data: { mangaId, quantity: 1 },
+    });
+  }
+};
+
+// Remove all items from cart
+export const clearCart = async (cartItems) => {
+  const headers = {
+    Authorization: `Bearer ${getToken()}`,
+    id: getUserId(),
+  };
+
+  for (const item of cartItems) {
+    await axios.delete(`${BASE_URL}/cart/remove`, {
+      headers,
+      data: { mangaId: item.manga._id, quantity: item.quantity },
+    });
+  }
+};
