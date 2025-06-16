@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { getBooksForCategories } from '../../apis/api.js';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 const Categories = () => {
+  const navigate = useNavigate(); 
   const [books, setBooks] = useState([]);
   const [genres, setGenres] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -49,7 +51,8 @@ const Categories = () => {
                 className="bg-white rounded-xl overflow-hidden shadow hover:shadow-lg transition-shadow duration-300"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.1, duration: 0.4 }}
+                transition={{ delay: idx * 0.1, duration: 0.4 }} 
+                onClick={() => navigate(`/manga/${book._id}`)}
               >
                 <img
                   src={book.coverImage}
@@ -67,7 +70,7 @@ const Categories = () => {
         {/* Sidebar */}
         <div className="lg:col-span-3 space-y-10">
           {/* Genres */}
-            <h3 className="text-2xl font-bold mb-4 mt-2 text-gray-800">Genres</h3>
+          <h3 className="text-2xl font-bold mb-4 mt-2 text-gray-800">Genres</h3>
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}

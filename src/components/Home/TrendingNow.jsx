@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { getTrendingMangas } from '../../apis/api.js';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 const TrendingNow = () => {
+  const navigate = useNavigate(); 
   const [trendingMangas, setTrendingMangas] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -72,7 +74,10 @@ const TrendingNow = () => {
 
                   <div className="mt-3 flex justify-between items-center">
                     <span className="text-indigo-600 font-semibold">₹{book.price}</span>
-                    <button className="text-sm px-3 py-1 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">
+                    <button 
+                      className="text-sm px-3 py-1 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition"
+                      onClick={() => navigate(`/manga/${book._id}`)}
+                      >
                       View
                     </button>
                   </div>

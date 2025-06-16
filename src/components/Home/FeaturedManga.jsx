@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { getFeaturedMangas } from '../../apis/api.js';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 const FeaturedManga = () => {
   const [mangas, setMangas] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate(); 
   
+
   useEffect(() => {
     (async () => {
       const data = await getFeaturedMangas();
@@ -59,7 +62,10 @@ const FeaturedManga = () => {
               <p className="text-sm text-gray-500 mt-1 line-clamp-2">{manga.description}</p>
             <div className="mt-3 flex justify-between items-center">
               <span className="text-indigo-600 font-semibold">₹{manga.price}</span>
-              <button className="text-sm px-3 py-1 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">
+              <button 
+                className="text-sm px-3 py-1 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition"
+                onClick={() => navigate(`/manga/${manga._id}`)}
+              >
                 View
               </button>
             </div>

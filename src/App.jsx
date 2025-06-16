@@ -20,7 +20,7 @@ function App() {
         <Route exact path='/' element={<Home />} />
         <Route path='/all-books' element={<AllBooks />} />
         <Route path='/manga/:id' element={<Manga />} />
-        <Route path='/manga/randome/:id' element={<Randome />} />
+        <Route path='/random' element={<Randome />} />
         <Route path='/sell' element={<Sell />} />
         <Route path='/cart' element={<Cart />} />
         <Route path='/profile' element={<Profile />} />

@@ -174,3 +174,20 @@ export const submitReview = async ({ mangaId, rating, comment }) => {
     throw err;
   }
 };
+
+// Fetch a random book with all images combined
+export const fetchRandomBook = async () => {
+  try {
+    const res = await axios.get(`${BASE_URL}/book/random`);
+    const bookData = res.data;
+    const allImages = [
+      bookData.coverImage,
+      ...(bookData.images || []),
+      ...(bookData.additionalImages || []),
+    ];
+    return { ...bookData, allImages };
+  } catch (error) {
+    console.error('Error fetching random book:', error);
+    throw error;
+  }
+};
