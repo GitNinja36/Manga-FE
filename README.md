@@ -83,6 +83,7 @@ Create a `.env` file at the root of the project and add:
 ```env
 VITE_BACKEND_API=http://localhost:8080
 VITE_STRIPE_PUBLIC_KEY=your_stripe_public_key_here
+VITE_CLOUDINARY_URL=your_CLOUDINARY_UR
 ```
 
 Make sure your backend server is running (check `Manga-BE` repo).
