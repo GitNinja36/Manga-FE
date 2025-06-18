@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import Select from 'react-select';
 import { useForm } from 'react-hook-form';
 import { toast, ToastContainer } from 'react-toastify';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import 'react-toastify/dist/ReactToastify.css';
-import { uploadToCloudinary, uploadBook } from '../apis/api.js';
+import { uploadToCloudinary, uploadBook, generateSummary } from '../apis/api.js';
 
 const genreOptions = [
   { value: 'Action', label: 'Action' },
@@ -27,14 +27,46 @@ const Sell = () => {
     image2: null,
     image3: null
   });
+  const [summary, setSummary] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm();
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    reset,
+    getValues,
+    formState: { errors }
+  } = useForm();
 
   const handleImagePreview = (type) => {
     if (imageFiles[type]) {
       setPreviewImage(URL.createObjectURL(imageFiles[type]));
     } else {
       setPreviewImage('https://via.placeholder.com/200?text=No+Image');
+    }
+  };
+
+  const handleUseAIClick = async () => {
+    const { title, description } = getValues();
+    if (!title || selectedGenres.length === 0 || !description) {
+      toast.warn('Please fill title, genre, and description before using AI.');
+      return;
+    }
+
+    try {
+      setIsGenerating(true);
+      const aiSummary = await generateSummary(
+        title,
+        description,
+        selectedGenres.map(g => g.value).join(', ')
+      );
+      setValue('description', aiSummary);
+      setSummary(aiSummary);
+    } catch (err) {
+      toast.error('AI summary generation failed!');
+    } finally {
+      setIsGenerating(false);
     }
   };
 
@@ -58,6 +90,7 @@ const Sell = () => {
         url,
         title: data.title,
         description: data.description,
+        summary: summary || data.description,
         author: data.author,
         language: data.language,
         price: parseFloat(data.price),
@@ -74,6 +107,7 @@ const Sell = () => {
       setImageFiles({ coverImage: null, image1: null, image2: null, image3: null });
       setSelectedGenres([]);
       setPreviewImage('');
+      setSummary('');
     } catch (err) {
       toast.error('Upload failed!');
     }
@@ -99,10 +133,18 @@ const Sell = () => {
           {errors.title && <p className="text-red-500 text-sm">Required</p>}
         </label>
 
-        <label className="col-span-2">Description
-          <textarea {...register('description', { required: true })} className="input h-24" />
+        <div className="col-span-2 relative">
+          <label>Description</label>
+          <textarea {...register('description', { required: true })} className="input h-24 pr-20" />
+          <button
+            type="button"
+            onClick={handleUseAIClick}
+            className="absolute top-[2.1rem] right-2 px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+          >
+            Use AI ✨
+          </button>
           {errors.description && <p className="text-red-500 text-sm">Required</p>}
-        </label>
+        </div>
 
         <label className="col-span-1">Genre
           <Select isMulti options={genreOptions} value={selectedGenres} onChange={setSelectedGenres} />
@@ -162,6 +204,33 @@ const Sell = () => {
             transition={{ duration: 0.4 }}
           />
         </div>
+
+        <AnimatePresence>
+          {isGenerating && (
+            <motion.div
+              className="col-span-2 text-center text-blue-500"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              Generating summary with AI...
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {summary && (
+          <motion.div
+            className="col-span-2 border p-4 bg-gray-50 rounded shadow"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            <h3 className="text-lg font-semibold mb-2">
+              AI Summary <span className="text-xs bg-yellow-200 text-black px-2 py-0.5 rounded">Powered by AI</span>
+            </h3>
+            <p className="text-sm text-gray-700">{summary}</p>
+          </motion.div>
+        )}
 
         <button type="submit" className="btn-submit col-span-2 mx-auto mt-4">
           Upload Book

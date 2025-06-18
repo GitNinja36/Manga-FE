@@ -344,3 +344,13 @@ export const signUpUser = async (userData) => {
     throw err;
   }
 };
+
+//ai
+export const generateSummary = async (title, description, genre) => {
+  const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/ai/generate-summary`, {
+    title,
+    description,
+    genre
+  });
+  return res.data.summary;
+};
