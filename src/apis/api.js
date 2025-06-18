@@ -1,12 +1,24 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:8080/v1';
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+const CLOUDINARY_URL = import.meta.env.VITE_CLOUDINARY_URL;
 
 const token = localStorage.getItem('token');
 export const getToken = () => localStorage.getItem('token');
 export const getUserId = () => localStorage.getItem('userId');
 
-// 🧠 Get Logged-in User Info
+// User Sign In
+export const signInUser = async (formData) => {
+  try {
+    const res = await axios.post(`${BASE_URL}/user/signIn`, formData);
+    return res.data; // contains token, role, id
+  } catch (err) {
+    console.error('Login failed:', err);
+    throw err;
+  }
+};
+
+// Get Logged-in User Info
 export const fetchUserInfo = async () => {
   const token = getToken();
   const id = getUserId();
@@ -83,7 +95,6 @@ export const getAllBooksPaginated = async ({ page = 1, limit = 12, search = '', 
     if (genre) params.append('genre', genre);
 
     const res = await axios.get(`${BASE_URL}/book/all?${params.toString()}`);
-    console.log(res.data);
     return {
       data: res.data?.data || [],
       total: res.data?.totalItems || 0,
@@ -108,7 +119,7 @@ export const uploadToCloudinary = async (file) => {
     data.append('file', file);
     data.append('upload_preset', 'mangaZone');
 
-    const res = await axios.post('https://api.cloudinary.com/v1_1/davtv5r1c/upload', data);
+    const res = await axios.post(CLOUDINARY_URL, data);
     return res.data.secure_url;
   } catch (err) {
     console.error('Cloudinary upload failed:', err);
@@ -119,7 +130,7 @@ export const uploadToCloudinary = async (file) => {
 // Upload manga to backend
 export const uploadBook = async (bookData) => {
   try {
-    const res = await axios.post('http://localhost:8080/v1/book/add', bookData, {
+    const res = await axios.post(`${BASE_URL}/book/add`, bookData, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`,
         id: localStorage.getItem('userId'),
@@ -146,7 +157,7 @@ export const getSingleBookById = async (id) => {
 //get review of any book
 export const getReviewsByBookId = async (id, headers) => {
   try {
-    const response = await axios.get(`http://localhost:8080/v1/review/${id}`, { headers });
+    const response = await axios.get(`${BASE_URL}/review/${id}`, { headers });
     return response.data;
   }catch(err){
     console.error('Error fetching single book:', err);
@@ -217,8 +228,6 @@ export const fetchCartItems = async () => {
   };
 
   const res = await axios.get(`${BASE_URL}/cart/all`, { headers });
-  console.log(res);
-  console.log(res.data);
   const items = res.data?.data || [];
   return items;
 };
@@ -248,14 +257,21 @@ export const clearCart = async (cartItems) => {
   };
 
   for (const item of cartItems) {
+    if (!item?.manga?._id) continue;
+
+    console.log("Removing from cart:", item.manga._id);
+
     await axios.delete(`${BASE_URL}/cart/remove`, {
       headers,
-      data: { mangaId: item.manga._id, quantity: item.quantity },
+      data: {
+        mangaId: item.manga._id,
+        quantity: item.quantity,
+      },
     });
   }
 };
 
-// STRIPE: Create Payment Intent
+//STRIPE: Create Payment Intent
 export const createPaymentIntent = async (amount) => {
   try {
     const res = await axios.post(`${BASE_URL}/payment/create-payment-intent`, { amount });
@@ -263,5 +279,68 @@ export const createPaymentIntent = async (amount) => {
   } catch (error) {
     console.error('Error creating payment intent:', error);
     throw error;
+  }
+};
+
+// STRIPE: Confirm and Process Payment
+export const processPayment = async (amount, stripe, cardElement) => {
+  try {
+    const res = await axios.post(`${BASE_URL}/payment/create-payment-intent`, { amount });
+    const clientSecret = res.data.clientSecret;
+
+    const result = await stripe.confirmCardPayment(clientSecret, {
+      payment_method: {
+        card: cardElement,
+      },
+    });
+
+    return result;
+  } catch (err) {
+    console.error('Error during payment processing:', err);
+    throw err;
+  }
+};
+
+//place order 
+export const placeOrder = async (amount, paymentIntentId) => {
+  const headers = {
+    Authorization: `Bearer ${getToken()}`,
+  };
+
+  const res = await axios.post(
+    `${BASE_URL}/order/place-order`,
+    { amount, paymentIntentId },
+    { headers }
+  );
+
+  return res.data;
+};
+
+// Direct Buy Order
+export const placeDirectOrder = async (amount, paymentIntentId, mangaId, qty) => {
+  return await axios.post(
+    `${BASE_URL}/order/direct-buy`,
+    {
+      directBuy: mangaId,
+      qty,
+      amount,
+      paymentIntentId,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    }
+  );
+};
+
+// Sign up a new user
+export const signUpUser = async (userData) => {
+  try {
+    const res = await axios.post(`${BASE_URL}/user/signUp`, userData);
+    return res.data;
+  } catch (err) {
+    console.error('Registration failed:', err);
+    throw err;
   }
 };

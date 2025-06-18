@@ -14,6 +14,7 @@ import Register from './pages/Register'
 import Cart from './pages/Cart'
 import Profile from './pages/Profile'
 import Randome from './pages/Randome'
+import Checkout from './pages/Checkout'
 
 import { Toaster } from 'react-hot-toast';
 
@@ -44,6 +45,10 @@ function App() {
         } />
         <Route path='/profile' element={
           <ProtectedRoute><Profile /></ProtectedRoute>
+        } />
+        
+        <Route path='/checkout' element={
+          <ProtectedRoute><Checkout /></ProtectedRoute>
         } />
       </Routes>
       <Footer />

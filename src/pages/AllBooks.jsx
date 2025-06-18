@@ -20,7 +20,6 @@ const AllBooks = () => {
   const fetchBooks = async () => {
     try {
       const res = await getAllBooksPaginated({ page, limit: 12, search: searchTerm, genre });
-      console.log("Fetched Books:", res);
       setBooks(res.data);
       setTotalPages(res.totalPages || 1);
     } catch (error) {

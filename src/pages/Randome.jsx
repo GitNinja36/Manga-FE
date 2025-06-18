@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { FaStar } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import {
   fetchRandomBook,
@@ -17,6 +18,7 @@ const Random = () => {
   const [reviewComment, setReviewComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [reviews, setReviews] = useState([]);
+  const navigate = useNavigate();
 
   const StarRating = ({ rating, onRate }) => (
     <div className="flex gap-1">
@@ -119,6 +121,18 @@ const Random = () => {
       toast.error('Failed to add to cart.');
     }
   };
+
+  const handleBuyNow = () => {
+    if (!book || !book.price) {
+      toast.error("Manga not loaded or price missing");
+      return;
+    }
+  
+    navigate(
+      `/checkout?directBuy=true&mangaId=${book._id}&qty=1&amount=${book.price}`
+    );
+  };
+
   const estimatedDelivery = getEstimatedDeliveryRange();
 
   if (!book) return <div className="text-center text-white mt-20">Loading...</div>;
@@ -209,6 +223,7 @@ const Random = () => {
               Add to Cart
             </button>
             <button 
+              onClick={handleBuyNow}
               className="px-6 py-2 bg-white text-black rounded-lg hover:bg-gray-300 transition-all"
             >
               Buy Now

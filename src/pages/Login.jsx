@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { signInUser } from '../apis/api.js';
 import { toast, ToastContainer } from 'react-toastify';
 import { motion } from 'framer-motion';
 import 'react-toastify/dist/ReactToastify.css';
 import heroImg from '../assets/register-hero.jpg';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [formData, setFormData] = useState({ username: '', password: '' });
@@ -24,11 +24,11 @@ const Login = () => {
     }
 
     try {
-      const res = await axios.post('http://localhost:8080/v1/user/signIn', formData);
+      const res = await signInUser(formData);
 
-      localStorage.setItem('token', res.data.token);
-      localStorage.setItem('role', res.data.role);
-      localStorage.setItem('userId', res.data.id);
+      localStorage.setItem('token', res.token);
+      localStorage.setItem('role', res.role);
+      localStorage.setItem('userId', res.id);
 
       toast.success("Login successful");
       setTimeout(() => navigate('/'), 1000);
@@ -36,6 +36,7 @@ const Login = () => {
       toast.error("Login failed. Please check your credentials");
     }
   };
+
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">

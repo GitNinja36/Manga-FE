@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FaStar } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import { 
   getSingleBookById, 
@@ -21,6 +22,7 @@ const MangaPage = () => {
   const [reviewRating, setReviewRating] = useState(0);
   const [reviewComment, setReviewComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
 
 
 const StarRating = ({ rating, onRate }) => {
@@ -125,6 +127,16 @@ const handleReviewSubmit = async () => {
     }
   };
 
+  const handleBuyNow = () => {
+    if (!book || !book.price) {
+      toast.error("Manga not loaded or price missing");
+      return;
+    }
+    navigate(
+      `/checkout?directBuy=true&mangaId=${book._id}&qty=1&amount=${book.price}`
+    );
+  };
+
   if (!book) return <div className="text-center text-white mt-20">Loading...</div>;
 
   return (
@@ -210,7 +222,8 @@ const handleReviewSubmit = async () => {
             >
               Add to Cart
             </button>
-            <button 
+            <button  
+              onClick={handleBuyNow}
               className="px-6 py-2 bg-white text-black rounded-lg hover:bg-gray-300 transition-all"
             >
               Buy Now

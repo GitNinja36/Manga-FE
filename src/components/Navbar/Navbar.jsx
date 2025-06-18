@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { FaShoppingCart } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fetchUserInfo } from '../../apis/api.js';
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const dropdownRef = useRef(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [user, setUser] = useState(null);
-
-  const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
 
   const links = [
     { title: "Home", link: "/" },
@@ -24,7 +24,25 @@ const Navbar = () => {
       setUser(userInfo);
     };
     getUser();
-  }, []);
+  }, [location]); 
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+
+    if (dropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [dropdownOpen]);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -39,7 +57,7 @@ const Navbar = () => {
       initial={{ y: -50, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: 'easeOut' }}
-      className="bg-black text-white px-4 md:px-10 py-3 shadow-md border border-gray-700 rounded-3xl m-4"
+      className="bg-black text-white px-4 md:px-10 py-3 shadow-md border border-gray-700 rounded-3xl m-4 z-50 relative"
     >
       <div className="max-w-screen-xl mx-auto flex items-center justify-between">
         {/* Logo */}
@@ -67,14 +85,14 @@ const Navbar = () => {
           ))}
         </div>
 
-        {/* Right - Cart & Avatar */}
+        {/* Cart + Avatar */}
         <div className="flex items-center gap-6 relative">
           <Link to="/cart">
             <FaShoppingCart className="text-2xl hover:text-pink-400 transition-colors duration-200" />
           </Link>
 
-          {/* Avatar */}
-          <button onClick={toggleDropdown} className="relative">
+          {/* Avatar Button */}
+          <button onClick={() => setDropdownOpen((prev) => !prev)}>
             <img
               src={
                 user?.avatar
@@ -86,14 +104,15 @@ const Navbar = () => {
             />
           </button>
 
-          {/* Dropdown */}
+          {/* Dropdown Menu */}
           <AnimatePresence>
             {dropdownOpen && (
               <motion.div
+                ref={dropdownRef}
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="absolute top-12 right-0 w-44 bg-zinc-900 border border-gray-600 text-white rounded-md shadow-lg z-50 overflow-hidden"
+                className="absolute top-14 right-0 w-44 bg-zinc-900 border border-gray-600 text-white rounded-md shadow-lg z-50 overflow-hidden"
               >
                 {user ? (
                   <>

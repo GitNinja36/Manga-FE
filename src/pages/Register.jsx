@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { motion } from 'framer-motion';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import heroImg from '../assets/register-hero.jpg';
+import { uploadToCloudinary, signUpUser } from '../apis/api.js';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -13,18 +13,15 @@ const Register = () => {
   const [avatarUrl, setAvatarUrl] = useState('');
   const [uploading, setUploading] = useState(false);
 
+  // Avatar Upload
   const handleAvatarUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('upload_preset', 'mangaZone');
-
     try {
       setUploading(true);
-      const res = await axios.post('https://api.cloudinary.com/v1_1/davtv5r1c/upload', formData);
-      setAvatarUrl(res.data.secure_url);
+      const url = await uploadToCloudinary(file);
+      setAvatarUrl(url);
       toast.success('Avatar uploaded successfully!');
     } catch (error) {
       toast.error('Failed to upload avatar');
@@ -33,6 +30,7 @@ const Register = () => {
     }
   };
 
+  // Refactored Form Submit
   const onSubmit = async (data) => {
     if (!avatarUrl) return toast.error('Please upload your avatar.');
 
@@ -45,7 +43,7 @@ const Register = () => {
     };
 
     try {
-      const res = await axios.post('http://localhost:8080/v1/user/signUp', payload);
+      await signUpUser(payload);
       toast.success('Registered Successfully!');
       reset();
       setTimeout(() => navigate('/signin'), 1000);

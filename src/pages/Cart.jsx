@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 import {
   fetchCartItems,
   updateCartQuantity,
@@ -10,6 +11,7 @@ import {
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [total, setTotal] = useState(0);
+  const navigate = useNavigate();
 
   const getDiscountedPrice = (price) => Math.floor(price * 0.9);
 
@@ -47,6 +49,15 @@ const Cart = () => {
     }
   };
 
+  const handleBuyNow = () => {
+    if (total <= 0 || cartItems.length === 0) {
+      toast.error("Cart is empty");
+      return;
+    }
+
+    navigate(`/checkout?amount=${total}`);
+  };
+
   useEffect(() => {
     fetchCart();
   }, []);
@@ -68,7 +79,7 @@ const Cart = () => {
             exit={{ opacity: 0, scale: 0.9 }}
             className="text-center mt-16"
           >
-            <img src="/empty-cart.svg" alt="Empty Cart" className="mx-auto w-64" />
+            <img src="https://media.istockphoto.com/id/861576608/vector/empty-shopping-bag-icon-online-business-vector-icon-template.jpg?s=612x612&w=0&k=20&c=I7MbHHcjhRH4Dy0NVpf4ZN4gn8FVDnwn99YdRW2x5k0=" alt="Empty Cart" className="mx-auto w-64" />
             <p className="text-xl font-medium text-gray-600 mt-4">Your cart is empty</p>
           </motion.div>
         ) : (
@@ -111,7 +122,10 @@ const Cart = () => {
           <div>
             <h3 className="text-xl font-semibold">Estimate Total: Rs {total}</h3>
           </div>
-          <button className="bg-pink-400 hover:bg-pink-500 text-white py-2 px-6 rounded-xl shadow-md transition-all duration-300">
+          <button
+            onClick={handleBuyNow}
+            className="bg-pink-400 hover:bg-pink-500 text-white py-2 px-6 rounded-xl shadow-md transition-all duration-300"
+            >
             Buy Now
           </button>
         </motion.div>
