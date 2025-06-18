@@ -1,68 +1,69 @@
 # 📚 Manga-FE — AI-Powered Manga Marketplace (Frontend)
 
 ![GitHub](https://img.shields.io/github/repo-size/GitNinja36/Manga-FE)
-![Tech](https://img.shields.io/badge/Built%20With-React.js%20%7C%20Tailwind%20CSS%20%7C%20Stripe%20%7C%20HuggingFace-brightgreen)
+![Tech](https://img.shields.io/badge/Built%20With-React.js%20%7C%20Tailwind%20CSS%20%7C%20Stripe%20%7C%20HuggingFace%20%7C%20Cloudinary-brightgreen)
 ![License](https://img.shields.io/github/license/GitNinja36/Manga-FE)
 
-### 🔗 GitHub Repo: [Manga-FE](https://github.com/GitNinja36/Manga-FE)
+🔗 **GitHub Repo:** [Manga-FE](https://github.com/GitNinja36/Manga-FE)
 
 ---
 
 ## 🚀 Project Overview
 
-**Manga-FE** is the frontend of a full-stack, AI-powered e-commerce platform where users can **buy and sell manga books**. The application delivers a seamless experience using:
+**Manga-FE** is the frontend of a full-stack, AI-powered manga marketplace. This app allows users to **buy and sell manga books** with a feature-rich, production-style experience.
 
-- ✨ **AI-generated book summaries** (via HuggingFace Inference API)
-- 💳 **Real-time payment processing** (via Stripe)
-- 📁 **Cloud image & file uploads** (via Cloudinary)
-- 📦 Responsive UI with animation (via Framer Motion)
+Key highlights:
+- ✨ **AI-powered manga summaries** (via HuggingFace Inference API)
+- 💳 **Stripe-based real-time payment processing**
+- 🖼️ **File & image uploads with Cloudinary**
+- 💡 **Smooth UI with Framer Motion animations**
 
-This is not just a form and table CRUD project — it's built to replicate **real-world functionality** used in modern digital marketplaces.
+This isn't just CRUD — it's a polished, real-world application reflecting modern frontend standards.
 
 ---
 
 ## 🧠 Key Features
 
-### 🧾 Sell Page with AI Summary Generation
-> "Use AI" button that instantly rewrites the manga description in 2–3 compelling lines, perfect for catching customer attention. Powered by **HuggingFace's `bart-large-cnn`** model.
+### 🧾 Sell Page with AI Summary Generation  
+> "Use AI" button rewrites your manga description in **2–3 catchy lines** to help convert users. Powered by **HuggingFace’s bart-large-cnn model**.
 
-### 🖼️ Upload System
-- Upload **manga PDFs**, **cover images**, and up to **3 additional images**
-- Real-time **preview switching** with image buttons
-- All uploads handled via **Cloudinary**
+### 🖼️ Advanced Upload System (via Cloudinary)
+- Upload **PDF manga files**, **cover image**, and **3 additional images**
+- Real-time **preview switching** for better visual experience
+- All files are optimized and stored via **Cloudinary API**
 
-### 🎨 Smooth & Responsive UI
+### 🎨 Responsive, Animated UI
 - Built using **React + Tailwind CSS**
-- Animations and transitions using **Framer Motion**
-- Form handling with **React Hook Form** and **React Select** for multi-genre tagging
+- Transitions via **Framer Motion** for clean UX
+- Forms via **React Hook Form**, multiselect genres via **React Select**
 
 ### 💰 Stripe Payment Integration
-- Fully working **Stripe Checkout**
-- Dynamic pricing, quantity validation, and success flow
-- Simulates real product purchase flow for books
+- Real-world **Stripe Checkout flow**
+- Price and quantity validation
+- Dynamic success and cancellation logic
 
 ---
 
 ## 🧑‍💻 Tech Stack
 
-| Tech             | Description                                     |
-|------------------|-------------------------------------------------|
-| React.js         | Component-based frontend framework              |
-| Tailwind CSS     | Utility-first modern styling                    |
-| Axios            | REST API requests                               |
-| React Hook Form  | Form validation & control                       |
-| Framer Motion    | Smooth transitions & animations                 |
-| React Select     | Multi-select dropdown for genres                |
-| Stripe           | Payment gateway integration                     |
-| HuggingFace      | AI summary generation using transformers        |
-| Cloudinary       | Image and file upload service                   |
-| Toastify         | Beautiful toast notifications                   |
+| Tech            | Description                                        |
+|-----------------|----------------------------------------------------|
+| React.js        | Component-based UI framework                      |
+| Tailwind CSS    | Utility-first modern CSS styling                  |
+| Axios           | For REST API communication                        |
+| React Hook Form | Form handling and validation                      |
+| React Select    | Genre multiselect UI                              |
+| Framer Motion   | Seamless animations & UI transitions              |
+| Toastify        | Toasts for UX feedback                            |
+| Stripe          | Payment integration (secure, production-grade)    |
+| HuggingFace     | AI-generated summaries using transformer models   |
+| Cloudinary      | File/image upload, storage, and preview system    |
 
 ---
 
 ## 🛠️ Setup Instructions
 
-### 1. Clone the Repository
+### 1. Clone the Repo
 
 ```bash
 git clone https://github.com/GitNinja36/Manga-FE.git
@@ -75,18 +76,18 @@ cd Manga-FE
 npm install
 ```
 
-### 3. Configure Environment Variables
+### 3. Setup Environment Variables
 
-Create a `.env` file in the root:
+Create a `.env` file at the root of the project and add:
 
-```
+```env
 VITE_BACKEND_API=http://localhost:8080
 VITE_STRIPE_PUBLIC_KEY=your_stripe_public_key_here
 ```
 
-> ⚠️ Ensure the backend API is running — see: [Manga-BE](https://github.com/GitNinja36/Manga-BE)
+Make sure your backend server is running (check `Manga-BE` repo).
 
-### 4. Run the Development Server
+### 4. Start the Dev Server
 
 ```bash
 npm run dev
@@ -94,48 +95,58 @@ npm run dev
 
 ---
 
-## 📸 UI Preview (Add Screenshots)
+## 📸 UI Preview
 
 | Sell Form | AI Summary | Stripe Checkout |
 |-----------|------------|-----------------|
-| (add screenshot) | (add screenshot) | (add screenshot) |
+| ✅        | ✅         | ✅              |
 
 ---
 
 ## 🤖 About the AI Integration
 
-This project integrates **HuggingFace’s `bart-large-cnn`** model to auto-summarize manga descriptions in a few catchy lines:
+This project integrates **HuggingFace's `bart-large-cnn` model** to create engaging manga summaries.
 
-- Custom prompt: _“You’re the best bookseller in the world. Write a catchy manga summary to boost sales…”_
-- AI is triggered via `"Use AI"` button and updates the description box dynamically
-- HuggingFace Inference API is called from the backend for better security
-- The frontend handles smooth transitions and real-time feedback
+- Prompt designed as if the AI is a **top-tier bookseller** crafting the best blurbs
+- Output shows **within the description input** for seamless UX
+- Called through a secure backend wrapper API
+
+---
+
+## ☁️ Cloudinary Integration
+
+- Users upload **cover and preview images** along with manga PDFs
+- All uploads go to **Cloudinary**, returned with hosted URLs
+- Real-time **image preview switching** using local blob previews
+- Ensures optimized and reliable file hosting for production
 
 ---
 
 ## 💼 Recruiter’s Note
 
-This project showcases my ability to:
+This project demonstrates my ability to:
 
-- ✅ Build **responsive, animated UI** using modern React + Tailwind stack
-- ✅ Integrate **AI features** with secure backend interaction
-- ✅ Implement **real Stripe payments** in production-like flows
-- ✅ Use third-party tools like Cloudinary, Toastify, and Framer Motion
-- ✅ Write clean, structured frontend logic with real-world UX
+- Build modern, animated, responsive frontend apps
+- Use **AI (HuggingFace)** to enhance user interaction
+- Integrate **Stripe** for real-time payment systems
+- Handle **file uploads and CDN delivery** via Cloudinary
+- Write clean React code with reusable components and state management
+
+If you're looking for someone who can blend **elegant UI**, **intelligent features**, and **practical e-commerce flows** — this project proves that capability.
 
 ---
 
 ## 📦 Related Repositories
 
-- 🔧 Backend API: [Manga-BE](https://github.com/GitNinja36/Manga-BE) (Express.js + MongoDB)
-- 🧠 AI Service: HuggingFace summarization via custom prompt integration
+- 🔧 Backend API: [Manga-BE](https://github.com/GitNinja36/Manga-BE) *(Node.js + Express + MongoDB)*
+- 🧠 AI Summary Service: Backend logic using HuggingFace inference API
 
 ---
 
 ## 📜 License
 
-This project is licensed under the [MIT License](https://github.com/GitNinja36/Manga-FE/blob/main/LICENSE)
+This project is licensed under the **MIT License**.
 
 ---
 
-> Made with ❤️ by [Rohit (GitNinja36)](https://github.com/GitNinja36)
+Made with ❤️ by [Rohit (GitNinja36)](https://github.com/GitNinja36)
